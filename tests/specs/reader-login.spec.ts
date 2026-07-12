@@ -13,5 +13,6 @@ test('Reader can log in successfully', async ({ page }) => {
   await loginPage.closeBanner();
   await loginPage.loginAsReader();
   await readerDashboard.assertDashboardLoaded();
+  console.log('URL after login:', page.url());
 
 });

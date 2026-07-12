@@ -15,4 +15,5 @@ test('Creator can log in and see dashboard', async ({ page }) => {
   await loginPage.closeBanner();
   await loginPage.loginAsCreator();
   await creatorDashboard.assertDashboardLoaded();
+  console.log('URL after login:', page.url()); //I got the endpoint
 });
