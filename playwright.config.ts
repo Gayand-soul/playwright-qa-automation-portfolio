@@ -37,27 +37,37 @@ export default defineConfig({
     {
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
+      dependencies: ['auth-setup'],
     },
 
     {
       name: 'firefox',
       use: { ...devices['Desktop Firefox'] },
+      dependencies: ['auth-setup'],
     },
 
     {
       name: 'webkit',
       use: { ...devices['Desktop Safari'] },
+      dependencies: ['auth-setup'],
     },
 
     /* Test against mobile viewports. */
-    // {
-    //   name: 'Mobile Chrome',
-    //   use: { ...devices['Pixel 5'] },
-    // },
-    // {
-    //   name: 'Mobile Safari',
-    //   use: { ...devices['iPhone 12'] },
-    // },
+    {
+      name: 'auth-setup',
+      testMatch: /auth-setup\.ts/,
+
+    },
+    {
+       name: 'Mobile Chrome',
+       use: { ...devices['Pixel 5'] },
+       dependencies: ['auth-setup'],
+    },
+    {
+      name: 'Mobile Safari',
+      use: { ...devices['iPhone 13'] },
+      dependencies: ['auth-setup'],
+    },
 
     /* Test against branded browsers. */
     // {
