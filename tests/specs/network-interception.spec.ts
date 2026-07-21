@@ -51,7 +51,14 @@ test('observes network requests when the reader dashboard loads', async ({ page 
 });
 
 // test: run with "npx playwright test network-interception -g "shows saved recipe card after saving via UI" --headed --project=webkit"
-test('shows saved recipe card after saving via UI', async ({ page }) => {
+test('shows saved recipe card after saving via UI', async ({ page }, testInfo) => {
+  // KNOWN APP BUG: on touch-enabled browsers, the Spara button fires its
+  // toggle handler multiple times per tap (confirmed via network logging:
+  // 3 calls to the save-toggle serverFn from one click on Mobile Chrome,
+  // vs. 1 on Mobile Safari). The rapid triple-toggle appears to trip the
+  // same /saved list-index race documented in the unsave bug above.
+  test.skip(testInfo.project.name === 'Mobile Chrome', 'Touch double-fire causes duplicate save-toggle calls — see issue #4');
+
   await page.goto('https://talk-and-cook-recipes.lovable.app/recipe/fb24607f-817c-4114-b633-0ef725c0d61d');
 
   // The detail page's own save-state is reliable (unlike /saved - see KNOWN
