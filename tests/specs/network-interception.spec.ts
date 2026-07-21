@@ -57,7 +57,11 @@ test('shows saved recipe card after saving via UI', async ({ page }, testInfo) =
   // 3 calls to the save-toggle serverFn from one click on Mobile Chrome,
   // vs. 1 on Mobile Safari). The rapid triple-toggle appears to trip the
   // same /saved list-index race documented in the unsave bug above.
-  test.skip(testInfo.project.name === 'Mobile Chrome', 'Touch double-fire causes duplicate save-toggle calls — see issue #4');
+  test.skip(testInfo.project.name === 'Mobile Chrome',
+  'Tapping Spara fires the save-toggle serverFn 3x on Mobile Chrome vs 1x on Mobile Safari ' +
+  '(touch/click compat-event double-fire). Net saved state is correct but likely trips the ' +
+  '/saved list-index race. See https://github.com/Gayand-soul/playwright-qa-automation-portfolio/issues/16'
+);
 
   await page.goto('https://talk-and-cook-recipes.lovable.app/recipe/fb24607f-817c-4114-b633-0ef725c0d61d');
 
