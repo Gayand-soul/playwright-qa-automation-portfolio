@@ -43,7 +43,7 @@ export default defineConfig({
     {
       name: 'firefox',
       use: { ...devices['Desktop Firefox'] },
-      dependencies: ['auth-setup'],
+      dependencies: ['auth-setup-firefox'],
     },
 
     {
@@ -51,13 +51,19 @@ export default defineConfig({
       use: { ...devices['Desktop Safari'] },
       dependencies: ['auth-setup'],
     },
-
+   
     /* Test against mobile viewports. */
     {
       name: 'auth-setup',
       testMatch: /auth-setup\.ts/,
 
     },
+    {
+      name: 'auth-setup-firefox',
+      testMatch: /auth-setup\.ts/,
+      use: { ...devices['Desktop Firefox'] },
+    },
+     
     {
        name: 'Mobile Chrome',
        use: { ...devices['Pixel 5'] },
