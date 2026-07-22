@@ -20,7 +20,6 @@ Repo: [github.com/Gayand-soul/playwright-qa-automation-portfolio](https://github
 - VS Code + Playwright Test for VSCode extension
 
 ## Project Structure
-
 ```
 docs/
   test-plan.md              # scope, approach, environment, risk areas
