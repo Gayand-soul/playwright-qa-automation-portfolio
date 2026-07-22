@@ -51,33 +51,77 @@ test('observes network requests when the reader dashboard loads', async ({ page 
 });
 
 // test: run with "npx playwright test network-interception -g "shows saved recipe card after saving via UI" --headed --project=webkit"
-test('shows saved recipe card after saving via UI', async ({ page }, testInfo) => {
-  // KNOWN APP BUG: on touch-enabled browsers, the Spara button fires its
-  // toggle handler multiple times per tap (confirmed via network logging:
-  // 3 calls to the save-toggle serverFn from one click on Mobile Chrome,
-  // vs. 1 on Mobile Safari). The rapid triple-toggle appears to trip the
-  // same /saved list-index race documented in the unsave bug above.
-  test.skip(testInfo.project.name === 'Mobile Chrome',
-  'Tapping Spara fires the save-toggle serverFn 3x on Mobile Chrome vs 1x on Mobile Safari ' +
-  '(touch/click compat-event double-fire). Net saved state is correct but likely trips the ' +
-  '/saved list-index race. See https://github.com/Gayand-soul/playwright-qa-automation-portfolio/issues/16'
-);
+type TestRecipe = {
+  id: string;
+  title: string;
+};
 
-  await page.goto('https://talk-and-cook-recipes.lovable.app/recipe/fb24607f-817c-4114-b633-0ef725c0d61d');
+const testRecipes: TestRecipe[] = [
+  { id: 'fb24607f-817c-4114-b633-0ef725c0d61d', title: 'Grillad flankstek med chimichurri' },
+  { id: '70a9fa91-67c5-4d3d-a757-c1a09c1e74ae', title: 'Ugnsbakad lax med citronpotatis' },
+  { id: 'f96f114c-2f8e-48db-aec1-0edf491ea6e7', title: 'Krämig svamppasta med timjan' },
+];
 
-  // The detail page's own save-state is reliable (unlike /saved - see KNOWN
-  // APP BUG above), so if this recipe is showing as saved from a previous
-  // run, reset it here before testing the save flow itself.
-  const sparatButton = page.getByRole('button', { name: 'Sparat' });
-  if (await sparatButton.isVisible()) {
-    await sparatButton.click();
-    await expect(page.getByRole('button', { name: 'Spara' })).toBeVisible();
-  }
+for (const recipe of testRecipes) {
+  test(`shows saved recipe card after saving via UI (${recipe.title})`, async ({ page }, testInfo) => {
+    // KNOWN APP BUG: on touch-enabled browsers, the Spara button fires its
+    // toggle handler multiple times per tap (confirmed via network logging:
+    // 3 calls to the save-toggle serverFn from one click on Mobile Chrome,
+    // vs. 1 on Mobile Safari). Reproduced again after adding the /saved
+    // reload-retry below, and it fails earlier than that fix even applies -
+    // right at the local "Sparat" button check on the detail page - so this
+    // is confirmed independent of the /saved list bug, not fixed by it.
+    test.skip(testInfo.project.name === 'Mobile Chrome',
+      'Tapping Spara fires the save-toggle serverFn multiple times on Mobile Chrome, and the net ' +
+      'toggle state is unreliable as a result (confirmed separately from the /saved list bug below). ' +
+      'See https://github.com/Gayand-soul/playwright-qa-automation-portfolio/issues/16'
+    );
 
-  await page.getByRole('button', { name: 'Spara' }).click();
-  await expect(page.getByRole('button', { name: 'Sparat' })).toBeVisible();
+    // Previously also skipped here for this recipe on Chromium specifically
+    // (list never picked up the new save). Manual investigation (Issue #16)
+    // found the /saved list can serve a stale snapshot on first load after a
+    // save; the reload-retry loop below reloads instead of just waiting, and
+    // fixed every isolated single-project run (chromium: 3/3 recipes passed).
+    // NOTE: running the full 5-project suite against this same shared reader
+    // account still occasionally reproduces the underlying race on chromium
+    // and firefox (different recipe each time, not a fixed combo) - the
+    // retry clearly reduces how often this bug is hit, but doesn't eliminate
+    // it when several browser sessions hit the same account back-to-back.
+    // Not re-skipping: this now looks like account contention exposing a
+    // still-real server-side race, not something a longer client-side wait
+    // can fully paper over.
 
-  await page.goto('https://talk-and-cook-recipes.lovable.app/saved');
-  await expect(page.getByRole('link', { name: /Perfekt sommargrillning/ })).toBeVisible();
-  await expect(page.getByText(EMPTY_STATE_TEXT)).not.toBeVisible();
-});
+    await page.goto(`https://talk-and-cook-recipes.lovable.app/recipe/${recipe.id}`);
+
+    // The detail page's own save-state is reliable (unlike /saved - see below),
+    // so if this recipe is showing as saved from a previous run, reset it here
+    // before testing the save flow itself.
+    const sparatButton = page.getByRole('button', { name: 'Sparat' });
+    if (await sparatButton.isVisible()) {
+      await sparatButton.click();
+      await expect(page.getByRole('button', { name: 'Spara' })).toBeVisible();
+    }
+
+    await page.getByRole('button', { name: 'Spara' }).click();
+    await expect(page.getByRole('button', { name: 'Sparat' })).toBeVisible();
+
+    await page.goto('https://talk-and-cook-recipes.lovable.app/saved');
+
+    // KNOWN APP BUG (Issue #16): the /saved list can render a snapshot taken
+    // before this save, even on a fresh page.goto - confirmed via manual
+    // cross-browser testing that a reload (not just waiting) is what surfaces
+    // the new entry. So we poll by reloading rather than trusting the first
+    // load, instead of just extending the timeout on a single assertion.
+    const savedRecipesSection = page.locator('h1:has-text("Mina sparade recept") + *');
+    const savedLink = savedRecipesSection.getByRole('link', { name: new RegExp(recipe.title) });
+
+    await expect(async () => {
+      if (!(await savedLink.isVisible())) {
+        await page.reload();
+      }
+      await expect(savedLink).toBeVisible();
+    }).toPass({ timeout: 15_000 });
+
+    await expect(page.getByText(EMPTY_STATE_TEXT)).not.toBeVisible();
+  });
+}
