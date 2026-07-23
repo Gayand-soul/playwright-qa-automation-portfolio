@@ -74,7 +74,7 @@ for (const recipe of testRecipes) {
     test.skip(testInfo.project.name === 'Mobile Chrome',
       'Tapping Spara fires the save-toggle serverFn multiple times on Mobile Chrome, and the net ' +
       'toggle state is unreliable as a result (confirmed separately from the /saved list bug below). ' +
-      'See https://github.com/Gayand-soul/playwright-qa-automation-portfolio/issues/16'
+      'See https://github.com/Gayand-soul/playwright-qa-automation-portfolio/issues/18'
     );
 
     // Previously also skipped here for this recipe on Chromium specifically
