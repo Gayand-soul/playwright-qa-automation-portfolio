@@ -19,32 +19,30 @@ Repo: [github.com/Gayand-soul/playwright-qa-automation-portfolio](https://github
 - Node.js v22+
 - VS Code + Playwright Test for VSCode extension
 
-```
+## Project Structure
 docs/
-  test-plan.md              # scope, approach, environment, risk areas
-  test-cases.md             # manual test case table (TC-01 ... TC-12)
+test-plan.md # scope, approach, environment, risk areas
+test-cases.md # manual test case table (TC-01 ... TC-12)
 tests/
-  auth-setup.spec.ts        # one-off: logs in once per role, saves storage state to playwright/.auth/
-  pages/
-    BasePage.ts
-    LoginPage.ts
-    ReaderDashboard.ts
-    CreatorDashboard.ts
-  specs/
-    reader-login.spec.ts
-    creator-login.spec.ts
-    reader-dashboard.spec.ts       # reuses saved reader storage state, skips UI login
-    creator-dashboard.spec.ts      # reuses saved creator storage state, skips UI login
-    api-practice.spec.ts           # CRUD + chaining practice against dummyjson.com
-    supabase-api.spec.ts           # real Supabase REST calls using the extracted session token
-    network-interception.spec.ts  # request/response logging, data-driven save-toggle flow,
-                                   # reload-retry against a known app race (see Issue #16)
-
-                                  # Mobile Chrome save-toggle double-fire tracked separately ([#18])
-
+auth-setup.spec.ts # one-off: logs in once per role, saves storage state to playwright/.auth/
+pages/
+BasePage.ts
+LoginPage.ts
+ReaderDashboard.ts
+CreatorDashboard.ts
+specs/
+reader-login.spec.ts
+creator-login.spec.ts
+reader-dashboard.spec.ts # reuses saved reader storage state, skips UI login
+creator-dashboard.spec.ts # reuses saved creator storage state, skips UI login
+api-practice.spec.ts # CRUD + chaining practice against dummyjson.com
+supabase-api.spec.ts # real Supabase REST calls using the extracted session token
+network-interception.spec.ts # request/response logging, data-driven save-toggle flow,
+# reload-retry against a known app race (see Issue #16);
+# Mobile Chrome save-toggle double-fire tracked separately (Issue #18)
 tsconfig.json
 playwright.config.ts
-```
+
 ## Roadmap
 
 - [x] **Phase 1 — Foundations:** Login flows for reader and creator roles, passing on all three browser
