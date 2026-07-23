@@ -90,6 +90,15 @@ for (const recipe of testRecipes) {
     // Not re-skipping: this now looks like account contention exposing a
     // still-real server-side race, not something a longer client-side wait
     // can fully paper over.
+    //
+    // CI EVIDENCE (first GitHub Actions run): even with workers=1 forcing the
+    // whole suite serial, this still hit 1 failed + 3 flaky across chromium
+    // and firefox. CI runners are slower and farther from the live Lovable/
+    // Supabase backend than a local machine, so the reload-retry window that
+    // passed 3/3 locally isn't always enough once that extra latency is
+    // added. Widening the window (and the test timeout that has to contain
+    // it) rather than treating it as a CI-only quirk.
+    test.setTimeout(60_000);
 
     await page.goto(`https://talk-and-cook-recipes.lovable.app/recipe/${recipe.id}`);
 
@@ -120,7 +129,7 @@ for (const recipe of testRecipes) {
         await page.reload();
       }
       await expect(savedLink).toBeVisible();
-    }).toPass({ timeout: 15_000 });
+    }).toPass({ timeout: 30_000 });
 
     await expect(page.getByText(EMPTY_STATE_TEXT)).not.toBeVisible();
   });
