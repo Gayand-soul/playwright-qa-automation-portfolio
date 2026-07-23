@@ -16,14 +16,22 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: 'npm'
 
       - name: Install dependencies
         run: npm ci
 
       - name: Install Playwright browsers
+        # DEBIAN_FRONTEND=noninteractive avoids a known GitHub Actions hang: on
+        # Ubuntu 24.04 runners, `needrestart` (triggered by the apt-get deps
+        # this step installs) shows an interactive "restart services?" prompt
+        # that never resolves in a non-interactive shell, and the job just
+        # sits there until timeout-minutes kills it.
         run: npx playwright install --with-deps
+        env:
+          DEBIAN_FRONTEND: noninteractive
+          NEEDRESTART_MODE: a
 
       - name: Run Playwright test suite
         run: npx playwright test
