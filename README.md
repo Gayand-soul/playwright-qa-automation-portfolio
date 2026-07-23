@@ -19,7 +19,6 @@ Repo: [github.com/Gayand-soul/playwright-qa-automation-portfolio](https://github
 - Node.js v22+
 - VS Code + Playwright Test for VSCode extension
 
-## Project Structure
 ```
 docs/
   test-plan.md              # scope, approach, environment, risk areas
@@ -46,15 +45,14 @@ tests/
 tsconfig.json
 playwright.config.ts
 ```
-
 ## Roadmap
 
 - [x] **Phase 1 — Foundations:** Login flows for reader and creator roles, passing on all three browser
 - [x] **Phase 2 — Page Object Model:** Refactor tests into POM classes (`BasePage`, `LoginPage`, `ReaderDashboard`, `CreatorDashboard`)
 - [x] **Phase 3 — Intermediate & API testing:** Test plan and manual test cases documented (`docs/`); API request testing, auth state reuse (storage state + Supabase REST), network interception, and data-driven tests (parameterized save-toggle flow) all complete
-- [ ] **Phase 4 — CI/CD:** GitHub Actions pipeline, Docker, published HTML test reports
+- [ ] **Phase 4 — CI/CD (in progress):** GitHub Actions pipeline runs on every push/PR to `main`; the known `/saved` race (below) is quarantined in a separate non-blocking step so it can't mask a real regression in the stable suite. Docker and published HTML reports still to come.
 
-Active investigation: [Issue #16](https://github.com/Gayand-soul/playwright-qa-automation-portfolio/issues/16) — a `/saved` list caching race (mitigated test-side with a reload-retry) and a separate touch double-fire bug on Mobile Chrome.
+Active investigations: [Issue #16](https://github.com/Gayand-soul/playwright-qa-automation-portfolio/issues/16) — a `/saved` list caching race, confirmed server-side (widening the client-side retry window from 15s to 30s did not fix it) — and [Issue #18](https://github.com/Gayand-soul/playwright-qa-automation-portfolio/issues/18) — a separate touch double-fire bug on Mobile Chrome.
 
 Progress is tracked on the [GitHub Project board](../../projects) and via [Issues](../../issues).
 
@@ -72,6 +70,7 @@ npx playwright test
 - Centralizing locators/actions in POM classes reduces duplication and long-term maintenance cost
 - Locator strategy favors `getByRole` — resilient to markup changes, carries accessibility signal, matches real user intent
 - Known UI quirk: an announcement banner intercepts pointer events in WebKit; handled by waiting for visibility before interacting and hidden state after dismissal
+- CI runs the stable suite and the known-flaky `/saved` race test separately, so a tracked app bug (Issue #16) can't mask a real regression elsewhere in the pipeline
 
 ## Bug Reporting
 
