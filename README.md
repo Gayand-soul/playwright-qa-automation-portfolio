@@ -52,7 +52,6 @@ playwright.config.ts
 - [x] **Phase 1 — Foundations:** Login flows for reader and creator roles, passing on all three browser
 - [x] **Phase 2 — Page Object Model:** Refactor tests into POM classes (`BasePage`, `LoginPage`, `ReaderDashboard`, `CreatorDashboard`)
 - [x] **Phase 3 — Intermediate & API testing:** Test plan and manual test cases documented (`docs/`); API request testing, auth state reuse (storage state + Supabase REST), network interception, and data-driven tests (parameterized save-toggle flow) all complete
-- [x] **Phase 2 — Page Object Model:** Refactor tests into POM classes (`ReaderDashboard.ts`, `CreatorDashboard.ts` in progress)
 - [ ] **Phase 3 — Intermediate & API testing:** API request testing and auth state reuse (storage state + Supabase REST) complete; network interception and data-driven tests next
 - [ ] **Phase 4 — CI/CD:** GitHub Actions pipeline, Docker, published HTML test reports
 
