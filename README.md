@@ -40,6 +40,7 @@ tests/
     supabase-api.spec.ts           # real Supabase REST calls using the extracted session token
     network-interception.spec.ts  # request/response logging, data-driven save-toggle flow,
                                    # reload-retry against a known app race (see Issue #16)
+                                  # Mobile Chrome save-toggle double-fire tracked separately ([#18])
 tsconfig.json
 playwright.config.ts
 ```
