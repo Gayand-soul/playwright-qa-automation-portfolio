@@ -11,27 +11,14 @@ jobs:
   test:
     timeout-minutes: 30
     runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.61.1-jammy
+    env:
+      HOME: /root
     steps:
       - uses: actions/checkout@v4
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: "npm"
-
       - name: Install dependencies
         run: npm ci
-
-      - name: Install Playwright browsers
-        # DEBIAN_FRONTEND=noninteractive avoids a known GitHub Actions hang: on
-        # Ubuntu 24.04 runners, `needrestart` (triggered by the apt-get deps
-        # this step installs) shows an interactive "restart services?" prompt
-        # that never resolves in a non-interactive shell, and the job just
-        # sits there until timeout-minutes kills it.
-        run: npx playwright install --with-deps
-        env:
-          DEBIAN_FRONTEND: noninteractive
-          NEEDRESTART_MODE: a
 
       - name: Run Playwright test suite (stable)
         run: npx playwright test --grep-invert "shows saved recipe card after saving via UI"
@@ -45,6 +32,7 @@ jobs:
       # continue-on-error so a known, tracked app bug doesn't block the
       # pipeline or mask a real regression in the stable suite above.
       - name: Run known-flaky /saved race tests (non-blocking, see Issue #16)
+        if: always()
         run: npx playwright test --grep "shows saved recipe card after saving via UI"
         continue-on-error: true
         env:
