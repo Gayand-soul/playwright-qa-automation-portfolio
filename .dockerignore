@@ -1,0 +1,6 @@
+
+node_modules
+playwright-report
+playwright-report-flaky
+test-results
+.git
