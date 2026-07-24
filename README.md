@@ -85,6 +85,7 @@ npx playwright test
 - Locator strategy favors `getByRole` — resilient to markup changes, carries accessibility signal, matches real user intent
 - Known UI quirk: an announcement banner intercepts pointer events in WebKit; handled by waiting for visibility before interacting and hidden state after dismissal
 - CI runs the stable suite and the known-flaky `/saved` race test separately, so a tracked app bug (Issue #16) can't mask a real regression elsewhere in the pipeline
+- Running Playwright in a GitHub Actions `container:` job breaks Firefox specifically — GitHub overrides `$HOME` to a path the container user doesn't own, and Firefox refuses to launch under that mismatch (Chromium/WebKit don't check this). Fixed by setting `HOME: /root` at the job level.
 
 ## Bug Reporting
 
