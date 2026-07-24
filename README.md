@@ -34,37 +34,26 @@ tests/
   specs/
     reader-login.spec.ts
     creator-login.spec.ts
-    reader-dashboard.spec.ts       # reuses saved reader storage state, skips UI login
-    creator-dashboard.spec.ts      # reuses saved creator storage state, skips UI login
-    api-practice.spec.ts           # CRUD + chaining practice against dummyjson.com
-    supabase-api.spec.ts           # real Supabase REST calls using the extracted session token
+    reader-dashboard.spec.ts      # reuses saved reader storage state, skips UI login
+    creator-dashboard.spec.ts     # reuses saved creator storage state, skips UI login
+    api-practice.spec.ts          # CRUD + chaining practice against dummyjson.com
+    supabase-api.spec.ts          # real Supabase REST calls using the extracted session token
     network-interception.spec.ts  # request/response logging, data-driven save-toggle flow,
-<<<<<<< HEAD
-                                   # reload-retry against a known app race (see Issue #16)
-
+                                  # reload-retry against a known app race (see Issue #16)
                                   # Mobile Chrome save-toggle double-fire tracked separately ([#18])
-
-=======
-                                   # reload-retry against a known app race (see Issue #16);
-                                   # Mobile Chrome save-toggle double-fire tracked separately (Issue #18)
->>>>>>> bed73c3 (Clean up remaining merge-conflict artifacts in README; ignore flaky report dir)
+                                  # reload-retry against a known app race (see Issue #16);
+                                  # Mobile Chrome save-toggle double-fire tracked separately (Issue #18)
 tsconfig.json
 playwright.config.ts
 ```
 
 ## Roadmap
 
-<<<<<<< HEAD
+
 - [x] **Phase 1 — Foundations:** Login flows for reader and creator roles, passing on all three browser
 - [x] **Phase 2 — Page Object Model:** Refactor tests into POM classes (`BasePage`, `LoginPage`, `ReaderDashboard`, `CreatorDashboard`)
 - [x] **Phase 3 — Intermediate & API testing:** Test plan and manual test cases documented (`docs/`); API request testing, auth state reuse (storage state + Supabase REST), network interception, and data-driven tests (parameterized save-toggle flow) all complete
-- [ ] **Phase 4 — CI/CD:** GitHub Actions pipeline, Docker, published HTML test reports
-=======
-- [x] **Phase 1 — Foundations:** Login flows for reader and creator roles, passing on all three browsers
-- [x] **Phase 2 — Page Object Model:** Refactor tests into POM classes (`BasePage`, `LoginPage`, `ReaderDashboard`, `CreatorDashboard`)
-- [x] **Phase 3 — Intermediate & API testing:** Test plan and manual test cases documented (`docs/`); API request testing, auth state reuse (storage state + Supabase REST), network interception, and data-driven tests (parameterized save-toggle flow) all complete
 - [ ] **Phase 4 — CI/CD (in progress):** GitHub Actions pipeline runs on every push/PR to `main`; the known `/saved` race (below) is quarantined in a separate non-blocking step so it can't mask a real regression in the stable suite. Docker and published HTML reports still to come.
->>>>>>> bed73c3 (Clean up remaining merge-conflict artifacts in README; ignore flaky report dir)
 
 Active investigations: [Issue #16](https://github.com/Gayand-soul/playwright-qa-automation-portfolio/issues/16) — a `/saved` list caching race, confirmed server-side (widening the client-side retry window from 15s to 30s did not fix it) — and [Issue #18](https://github.com/Gayand-soul/playwright-qa-automation-portfolio/issues/18) — a separate touch double-fire bug on Mobile Chrome.
 
