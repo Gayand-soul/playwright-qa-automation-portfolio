@@ -10,6 +10,7 @@
 // Those files are already gitignored — never commit them, session tokens live inside.
 
 import { test } from '@playwright/test';
+import fs from 'fs';
 import { LoginPage } from './pages/LoginPage';
 import { ReaderDashboard } from './pages/ReaderDashboard';
 import { CreatorDashboard } from './pages/CreatorDashboard';
@@ -17,6 +18,15 @@ import { CreatorDashboard } from './pages/CreatorDashboard';
 
 
 const URL = 'https://talk-and-cook-recipes.lovable.app/';
+
+// Firefox's cookie manager rejects non-integer `expires` values
+// (Protocol error NS_ERROR_ILLEGAL_VALUE) — Chromium captures them
+// as floats, so round before saving. See microsoft/playwright#24221.
+async function saveSanitizedState(page: import('@playwright/test').Page, path: string) {
+  const state = await page.context().storageState();
+  state.cookies = state.cookies.map(c => ({ ...c, expires: Math.floor(c.expires) }));
+  fs.writeFileSync(path, JSON.stringify(state, null, 2));
+}
 
 test('capture reader storage state', async ({ page }) => {
   const loginPage = new LoginPage(page);
@@ -27,7 +37,7 @@ test('capture reader storage state', async ({ page }) => {
   await loginPage.loginAsReader();
   await readerDashboard.assertDashboardLoaded(); //wait for login to finish
 
-  await page.context().storageState({ path: 'playwright/.auth/reader.json' });
+  await saveSanitizedState(page, 'playwright/.auth/reader.json');
 });
 
 test('capture creator storage state', async ({ page }) => {
@@ -39,5 +49,5 @@ test('capture creator storage state', async ({ page }) => {
   await loginPage.loginAsCreator();
   await creatorDashboard.assertDashboardLoaded();
 
-  await page.context().storageState({ path: 'playwright/.auth/creator.json' });
+  await saveSanitizedState(page, 'playwright/.auth/creator.json');
 });

@@ -74,7 +74,8 @@ npx playwright test
 - Locator strategy favors `getByRole` — resilient to markup changes, carries accessibility signal, matches real user intent
 - Known UI quirk: an announcement banner intercepts pointer events in WebKit; handled by waiting for visibility before interacting and hidden state after dismissal
 - CI runs the stable suite and the known-flaky `/saved` race test separately, so a tracked app bug (Issue #16) can't mask a real regression elsewhere in the pipeline
-- Running Playwright inside a GitHub Actions `container:` job breaks Firefox specifically — GitHub overrides `$HOME` to a path the container's user doesn't own, and Firefox's own sandbox check refuses to launch under that mismatch (Chromium/WebKit don't enforce this); fixed by setting `HOME: /root` at the job level
+- Running Playwright inside a GitHub Actions `container:` job breaks Firefox specifically — GitHub overrides `$HOME` to a path the container's user doesn't own, and Firefox's own sandbox check refuses to launch under that mismatch (Chromium/WebKit don't enforce this); fixed by setting `HOME: /root` at the job level.
+- Storage state captured via Chromium includes a float `expires` cookie value that Firefox's Juggler protocol rejects on injection (`Protocol error (Browser.setCookies): NS_ERROR_ILLEGAL_VALUE`, a known Playwright issue — [microsoft/playwright#24221](https://github.com/microsoft/playwright/issues/24221)); fixed by rounding `expires` to an integer in `auth-setup.spec.ts` before writing the auth JSON files
 
 ## Bug Reporting
 

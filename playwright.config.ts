@@ -36,7 +36,17 @@ export default defineConfig({
   projects: [
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      use: {
+         ...devices['Desktop Chrome'],
+         permissions: ['microphone'],
+         launchOptions:{
+          args: [
+            '--use-fake-device-for-media-stream',
+            '--use-fake-ui-for-media-stream',
+          ],
+         },
+        
+        },
       dependencies: ['auth-setup'],
     },
 
