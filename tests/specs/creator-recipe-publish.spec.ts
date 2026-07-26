@@ -23,34 +23,34 @@ test.use({
  * the behavior we actually want to lock in as a regression guard while
  * Issue #20 is open.
  *
-  * When Issue #20 is fixed: this test can stay as-is — it documents correct
-  * frontend error-handling regardless of root cause, so no changes are
-  * needed unless the error message or handling itself changes.
-  + * QUARANTINED — see test.skip below. CI request logging (page.on('request'),
-+ * confirmed 2026-07-26) shows the app's recipe-save flow no longer makes any
-+ * client-visible POST to /rest/v1/recipes. It now goes through two POSTs to
-+ * opaque, build-specific endpoints — /_serverFn/<hash> — which call Supabase
-+ * server-to-server, a hop Playwright's page.route() cannot see or intercept
-+ * from the browser context. So the mock below can never fire: this isn't
-+ * flakiness, it's structurally unfixable as written.
-+ *
-+ * recipes-api.spec.ts is the test that actually still guards Issue #20 (at
-+ * the API/schema level, bypassing the UI entirely). Re-enable this test only
-+ * if it's rewritten to intercept the real /_serverFn/<hash> calls (fragile —
-+ * those hashes are build artifacts and can change on every redeploy) or if
-+ * the app exposes a stable, client-visible save endpoint again.
-+ */
+ * When Issue #20 is fixed: this test can stay as-is — it documents correct
+ * frontend error-handling regardless of root cause, so no changes are
+ * needed unless the error message or handling itself changes.
+ *
+ * QUARANTINED — see test.skip below. CI request logging (page.on('request'),
+ * confirmed 2026-07-26) shows the app's recipe-save flow no longer makes any
+ * client-visible POST to /rest/v1/recipes. It now goes through two POSTs to
+ * opaque, build-specific endpoints — /_serverFn/<hash> — which call Supabase
+ * server-to-server, a hop Playwright's page.route() cannot see or intercept
+ * from the browser context. So the mock below can never fire: this isn't
+ * flakiness, it's structurally unfixable as written.
+ *
+ * recipes-api.spec.ts is the test that actually still guards Issue #20 (at
+ * the API/schema level, bypassing the UI entirely). Re-enable this test only
+ * if it's rewritten to intercept the real /_serverFn/<hash> calls (fragile —
+ * those hashes are build artifacts and can change on every redeploy) or if
+ * the app exposes a stable, client-visible save endpoint again.
+ */
 test('shows an error banner when the recipe save API returns the known 22P02 error — issue #20', async ({ page }, testInfo) => {
-  test.skip(testInfo.project.name !== 'chromium', 'Voice recording needs a fake mic device; only configured for the chromium project.');
-  
- /* + test.skip(
-+    true,
-+    'Quarantined: the recipe-save flow now runs through opaque /_serverFn/<hash> ' +
-+    'server-to-server calls instead of a client-visible POST to /rest/v1/recipes, ' +
-+    'so this test\'s route mock can never intercept the real save call (confirmed ' +
-+    'via CI request logging, 2026-07-26 — see header comment for detail). ' +
-+    'recipes-api.spec.ts covers Issue #20 at the API/schema level instead.'
-+  );*/
+  test.skip(
+    true,
+    'Quarantined: the recipe-save flow now runs through opaque /_serverFn/<hash> ' +
+    'server-to-server calls instead of a client-visible POST to /rest/v1/recipes, ' +
+    'so this test\'s route mock can never intercept the real save call (confirmed ' +
+    'via CI request logging, 2026-07-26 — see header comment for detail). ' +
+    'recipes-api.spec.ts covers Issue #20 at the API/schema level instead.'
+  );
+
   // Force the exact failure captured in Issue #20, regardless of the actual
   // (fake-audio-generated) recipe content sent in the real request.
   page.on('request', (req) => {
