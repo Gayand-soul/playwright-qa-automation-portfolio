@@ -1,6 +1,6 @@
 # Manual Test Cases — CookingPage Sandbox
 
-Scope matches `test-plan.md`: login, banner dismissal, and dashboard load verification for Reader and Creator roles, across Chromium, Firefox, and WebKit.
+Scope matches `test-plan.md`: login, banner dismissal, and dashboard load verification for Reader and Creator roles; recipe viewing and saving; and Creator recipe publishing — across Chromium, Firefox, and WebKit (mobile viewports noted where behavior differs).
 
 | ID | Title | Steps | Expected Result | Priority |
 |---|---|---|---|---|
@@ -16,8 +16,15 @@ Scope matches `test-plan.md`: login, banner dismissal, and dashboard load verifi
 | TC-10 | Parallel execution does not cause cross-test interference | 1. Run the full suite with `fullyParallel: true`.<br>2. Observe all specs/browsers running concurrently. | Reader and Creator tests do not affect each other's session/state; all tests pass independently. | Medium |
 | TC-11 (edge case) | Login attempt before banner is dismissed | 1. Navigate to the site.<br>2. Without dismissing the banner, attempt to click the Reader or Creator selector. | Click is blocked or intercepted by the banner (documents current behavior); confirms why `closeBanner()` must run first in every flow. | Low |
 | TC-12 (edge case) | Reload after login | 1. Complete Reader (or Creator) login.<br>2. Reload the page. | Document actual behavior: whether the session persists and the dashboard reloads correctly, or whether the user is returned to the login/selector screen. | Low |
+| TC-13 | Reader views an individual recipe | 1. Complete Reader login.<br>2. Navigate to a recipe detail page (`/recipe/:id`). | Recipe detail page loads with the expected title and content; no console errors. | Medium |
+| TC-14 | Reader saves a recipe | 1. Open a recipe detail page not already saved.<br>2. Click "Spara". | Button updates to "Sparat" and the state persists on reload of the detail page. | High |
+| TC-15 (edge case) | `/saved` list reflects a newly saved recipe | 1. Save a recipe per TC-14.<br>2. Navigate to `/saved`. | Expected: saved recipe appears immediately. Actual (known bug, Issue #16): the list can serve a stale snapshot on first load; a reload is required to surface the new entry. Documents current behavior, not the desired one. | Low |
+| TC-16 (edge case) | Unsaving a recipe on Mobile Chrome | 1. On Mobile Chrome, tap "Spara" on a recipe detail page. | Expected: exactly one save-toggle call fires. Actual (known bug, Issue #18): the tap fires the toggle handler multiple times, leaving the save state unreliable. Documents current behavior. | Low |
+| TC-17 | Creator records and publishes a recipe — happy path | 1. Complete Creator login.<br>2. Click "🎙️ Spela in recept".<br>3. Select a time category.<br>4. Record, stop, upload a photo, click "Publicera recept". | Recipe saves and publishes successfully; no error banner shown. **Not currently automatable end-to-end** — Playwright's fake microphone feeds silence, producing a generic empty recipe rather than exercising real transcription. Covered manually only until a non-mic path to a realistic payload exists. | Medium |
+| TC-18 (edge case) | Creator publish fails on non-integer `cooking_time_minutes` | 1. Trigger (or mock) a recipe save where `cooking_time_minutes` is a float, e.g. `30.075`.<br>2. Submit the publish request. | Backend (Postgres via Supabase REST) rejects the insert with `400` / code `22P02`; frontend shows "Kunde inte spara receptet". Known bug, Issue #20 — automated at both the API level (`recipes-api.spec.ts`) and UI level (`creator-recipe-publish.spec.ts`, via mocked response). | High |
 
 ## Notes
 
-- TC-11 and TC-12 are edge cases intended to confirm real behavior rather than assert a specific "correct" outcome — record what actually happens and file a bug only if it contradicts expected UX.
-- Cases beyond login/dashboard (recipe search, viewing a recipe, Creator publishing actions) are intentionally excluded — see "Out of scope" in `test-plan.md`. Add rows here once those features are explored in a later phase.
+- TC-11, TC-12, TC-15, and TC-16 are edge cases intended to confirm real behavior rather than assert a specific "correct" outcome — record what actually happens and file a bug only if it contradicts expected UX (TC-15 and TC-16 already have bugs filed: Issues #16 and #18).
+- TC-17 is the one case in this table without full UI automation, by design — see the fake-microphone limitation noted in `test-plan.md` (§4, §6) and `README.md`.
+- Recipe search and filtering, and editing/deleting an existing blog post, remain out of scope — see `test-plan.md`.
