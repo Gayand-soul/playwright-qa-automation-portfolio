@@ -11,6 +11,7 @@
 
 import { test } from '@playwright/test';
 import fs from 'fs';
+import path from 'path'; 
 import { LoginPage } from './pages/LoginPage';
 import { ReaderDashboard } from './pages/ReaderDashboard';
 import { CreatorDashboard } from './pages/CreatorDashboard';
@@ -22,10 +23,11 @@ const URL = 'https://talk-and-cook-recipes.lovable.app/';
 // Firefox's cookie manager rejects non-integer `expires` values
 // (Protocol error NS_ERROR_ILLEGAL_VALUE) — Chromium captures them
 // as floats, so round before saving. See microsoft/playwright#24221.
-async function saveSanitizedState(page: import('@playwright/test').Page, path: string) {
+async function saveSanitizedState(page: import('@playwright/test').Page, filePath: string) {
   const state = await page.context().storageState();
   state.cookies = state.cookies.map(c => ({ ...c, expires: Math.floor(c.expires) }));
-  fs.writeFileSync(path, JSON.stringify(state, null, 2));
+  fs.mkdirSync(path.dirname(filePath), { recursive: true });
+  fs.writeFileSync(filePath, JSON.stringify(state, null, 2));
 }
 
 test('capture reader storage state', async ({ page }) => {
