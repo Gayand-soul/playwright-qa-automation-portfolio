@@ -54,12 +54,14 @@ export default defineConfig({
       name: 'firefox',
       use: { ...devices['Desktop Firefox'] },
       dependencies: ['auth-setup-firefox'],
+      testIgnore: /(recipes-api|supabase-api)\.spec\.ts/,
     },
 
     {
       name: 'webkit',
       use: { ...devices['Desktop Safari'] },
       dependencies: ['auth-setup'],
+      testIgnore: /(recipes-api|supabase-api)\.spec\.ts/,
     },
    
     /* Test against mobile viewports. */
@@ -78,11 +80,13 @@ export default defineConfig({
        name: 'Mobile Chrome',
        use: { ...devices['Pixel 5'] },
        dependencies: ['auth-setup'],
+       testIgnore: /(recipes-api|supabase-api)\.spec\.ts/,
     },
     {
       name: 'Mobile Safari',
       use: { ...devices['iPhone 13'] },
       dependencies: ['auth-setup'],
+     testIgnore: /(recipes-api|supabase-api)\.spec\.ts/,
     },
 
     /* Test against branded browsers. */

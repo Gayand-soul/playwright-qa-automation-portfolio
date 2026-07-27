@@ -1,8 +1,65 @@
 import { test, expect } from '@playwright/test';
+import fs from 'fs';
 import { ReaderDashboard } from '../pages/ReaderDashboard';
 
 test.use({ storageState: 'playwright/.auth/reader.json' });
 test.describe.configure({ mode: 'serial' });
+
+//Diagnostic test 1 (date= 27 July 2026, v2: logs method, wider body slice, UI checks)
+test('diagnostic: inspect /saved responses across reload race', async ({ page }) => {
+  test.setTimeout(60_000);
+  const recipeId = 'fb24607f-817c-4114-b633-0ef725c0d61d';
+  const recipeTitle = 'Grillad flankstek med chimichurri';
+  const log: any[] = [];
+
+  page.on('response', async (response) => {
+    const url = response.url();
+    if (url.includes('_serverFn') || url.includes('supabase.co')) {
+      log.push({
+        phase: (page as any)._diagPhase ?? 'unlabeled',
+        method: response.request().method(),
+        status: response.status(),
+        url,
+        headers: response.headers(),
+        body: (await response.text().catch(() => '[unreadable]')).slice(0, 3000),
+      });
+    }
+  });
+
+  await page.goto(`https://talk-and-cook-recipes.lovable.app/recipe/${recipeId}`);
+  const sparatButton = page.getByRole('button', { name: 'Sparat' });
+  if (await sparatButton.isVisible()) {
+    await sparatButton.click();
+    await expect(page.getByRole('button', { name: 'Spara' })).toBeVisible();
+  }
+
+  (page as any)._diagPhase = 'after-save';
+  await page.getByRole('button', { name: 'Spara' }).click();
+  await expect(page.getByRole('button', { name: 'Sparat' })).toBeVisible();
+
+  (page as any)._diagPhase = 'first-load-of-saved';
+  await page.goto('https://talk-and-cook-recipes.lovable.app/saved');
+  await page.waitForTimeout(1500);
+
+  const savedRecipesSection = page.locator('h1:has-text("Mina sparade recept") + *');
+  const savedLinkFirstLoad = savedRecipesSection.getByRole('link', { name: new RegExp(recipeTitle) });
+  const visibleOnFirstLoad = await savedLinkFirstLoad.isVisible().catch(() => false);
+  log.push({ phase: 'first-load-of-saved', uiCheck: true, recipeVisible: visibleOnFirstLoad });
+
+  (page as any)._diagPhase = 'after-reload';
+  await page.reload();
+  await page.waitForTimeout(1500);
+
+  const savedLinkAfterReload = savedRecipesSection.getByRole('link', { name: new RegExp(recipeTitle) });
+  const visibleAfterReload = await savedLinkAfterReload.isVisible().catch(() => false);
+  log.push({ phase: 'after-reload', uiCheck: true, recipeVisible: visibleAfterReload });
+
+  fs.writeFileSync('saved-diagnostic.json', JSON.stringify(log, null, 2));
+  console.log(JSON.stringify(log, null, 2));
+  console.log(`UI CHECK — visible on first load: ${visibleOnFirstLoad}, visible after reload: ${visibleAfterReload}`);
+});
+
+
 
 const EMPTY_STATE_TEXT = 'Inga sparade recept än. Tryck på hjärtat på ett recept så hamnar det här.';
 

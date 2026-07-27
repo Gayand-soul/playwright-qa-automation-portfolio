@@ -40,13 +40,18 @@ tests/
     creator-dashboard.spec.ts     # reuses saved creator storage state, skips UI login
     api-practice.spec.ts          # CRUD + chaining practice against dummyjson.com
     supabase-api.spec.ts          # real Supabase REST calls using the extracted session token
+                                  # (chromium-only — pure request-fixture test, no browser needed)
     network-interception.spec.ts  # request/response logging, data-driven save-toggle flow,
-                                  # reload-retry against a known app race (see Issue #16)
+                                  # reload-retry against a known app race (see Issue #16);
+                                  # includes a diagnostic test that logs full request/response
+                                  # detail for the /saved list's serverFn call, used to
+                                  # investigate Issue #16 without needing full CI concurrency
                                   # Mobile Chrome save-toggle double-fire tracked separately (Issue #18)
     creator-recipe-publish.spec.ts  # UI-level: asserts the frontend shows the correct error
                                   # banner when the backend returns the known 22P02 error (Issue #20)
     recipes-api.spec.ts             # API-level: POSTs directly to Supabase REST to confirm
                                   # Postgres rejects a non-integer cooking_time_minutes (Issue #20)
+                                  # (chromium-only — pure request-fixture test, no browser needed)
 tsconfig.json
 playwright.config.ts
 ```
@@ -60,7 +65,7 @@ playwright.config.ts
 - [x] **Phase 3.5 — Bug hunting via Codegen:** Recorded the creator voice-recipe flow (voice → photo → publish) with Playwright Codegen; found a real publish-blocking bug (Issue #20, below) and added both a UI-level and an API-level regression test for it
 - [ ] **Phase 4 — CI/CD (in progress):** GitHub Actions pipeline runs on every push/PR to `main`; the known `/saved` race (below) is quarantined in a separate non-blocking step so it can't mask a real regression in the stable suite. Docker and published HTML reports still to come.
 
-Active investigations: [Issue #16](https://github.com/Gayand-soul/playwright-qa-automation-portfolio/issues/16) — a `/saved` list caching race, confirmed server-side (widening the client-side retry window from 15s to 30s did not fix it) — [Issue #18](https://github.com/Gayand-soul/playwright-qa-automation-portfolio/issues/18) — a separate touch double-fire bug on Mobile Chrome — and [Issue #20](https://github.com/Gayand-soul/playwright-qa-automation-portfolio/issues/20) — recipe publish fails because `cooking_time_minutes` is computed as a float and sent to an `integer` Postgres column.
+Active investigations: [Issue #16](https://github.com/Gayand-soul/playwright-qa-automation-portfolio/issues/16) — a `/saved` list staleness race. Root cause still unconfirmed: a diagnostic test in `network-interception.spec.ts` identified the actual serverFn endpoint behind the list and captured clean, consistent data under single-session load — meaning the race needs the full multi-project CI concurrency to reproduce, and doesn't show up in isolated manual runs. No caching headers (`Cache-Control`, `Age`) appear on the app's own endpoints, so a CDN/edge cache and backend read/write lag are both still on the table — [Issue #18](https://github.com/Gayand-soul/playwright-qa-automation-portfolio/issues/18) — a separate touch double-fire bug on Mobile Chrome — and [Issue #20](https://github.com/Gayand-soul/playwright-qa-automation-portfolio/issues/20) — recipe publish fails because `cooking_time_minutes` is computed as a float and sent to an `integer` Postgres column.
 
 Progress is tracked on the [GitHub Project board](../../projects) and via [Issues](../../issues).
 
@@ -83,6 +88,8 @@ npx playwright test
 - Storage state captured via Chromium includes a float `expires` cookie value that Firefox's Juggler protocol rejects on injection (`Protocol error (Browser.setCookies): NS_ERROR_ILLEGAL_VALUE`, a known Playwright issue — [microsoft/playwright#24221](https://github.com/microsoft/playwright/issues/24221)); fixed by rounding `expires` to an integer in `auth-setup.spec.ts` before writing the auth JSON files
 - Playwright's browsers have no real microphone by default; the creator voice-recording flow needs `--use-fake-device-for-media-stream` plus `permissions: ['microphone']` (Chromium only). The fake device feeds silence, which the app turns into an empty/generic recipe that saves successfully — so it can't reliably reproduce Issue #20 end-to-end, which is why that bug gets a separate API-level test instead of relying on scripted voice input
 - Two-tier regression strategy for backend-originated bugs like Issue #20: an API-level test (`recipes-api.spec.ts`) hits Supabase REST directly to lock in the schema-level behavior, while a UI-level test (`creator-recipe-publish.spec.ts`) mocks the same API response to lock in the frontend's error handling — neither alone covers both layers
+- Pure API-level tests (`recipes-api.spec.ts`, `supabase-api.spec.ts`) only use the `request` fixture and never touch a browser context, so they behave identically across all 5 projects; scoped to `chromium` only via `testIgnore` in `playwright.config.ts` to avoid running the same HTTP call 5 times per suite run
+- Debugging Issue #16: a click fired immediately after navigation can silently no-op if it lands before the page finishes hydrating — no error, no failed assertion, just zero network calls. Confirmed this during live reproduction attempts; any reload-retry or race-reproduction logic should assert the underlying network call actually fired before trusting a "save" as real
 
 ## Bug Reporting
 
