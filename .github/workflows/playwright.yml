@@ -1,5 +1,10 @@
 name: Playwright Tests
 
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
 on:
   push:
     branches: [main]
@@ -81,3 +86,49 @@ jobs:
         run: docker build -t playwright-qa-portfolio .
       - name: Run test suite inside the image
         run: docker run --rm playwright-qa-portfolio
+
+  publish-report:
+    needs: test
+    if: always()
+    runs-on: ubuntu-latest
+    concurrency:
+      group: "pages"
+      cancel-in-progress: false
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Download stable report
+        uses: actions/download-artifact@v4
+        with:
+          name: playwright-report
+          path: report/stable
+
+      - name: Download flaky /saved report
+        uses: actions/download-artifact@v4
+        with:
+          name: playwright-report-flaky
+          path: report/flaky
+
+      - name: Add landing page
+        run: |
+          cat <<'EOF' > report/index.html
+          <html>
+          <body>
+            <h1>Playwright Test Reports</h1>
+            <ul>
+              <li><a href="stable/index.html">Stable suite</a></li>
+              <li><a href="flaky/index.html">Known-flaky /saved race (Issue #16)</a></li>
+            </ul>
+          </body>
+          </html>
+          EOF
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: report
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
