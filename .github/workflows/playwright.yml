@@ -8,6 +8,22 @@ on:
   workflow_dispatch: {}
 
 jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      docker: ${{ steps.filter.outputs.docker }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            docker:
+              - 'Dockerfile'
+              - 'run-tests.sh'
+              - 'package.json'
+              - 'package-lock.json'
+
   test:
     timeout-minutes: 30
     runs-on: ubuntu-latest
@@ -53,3 +69,15 @@ jobs:
           name: playwright-report-flaky
           path: playwright-report-flaky/
           retention-days: 30
+
+  docker-build-test:
+    needs: changes
+    if: github.event_name == 'workflow_dispatch' || needs.changes.outputs.docker == 'true'
+    timeout-minutes: 30
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build Docker image
+        run: docker build -t playwright-qa-portfolio .
+      - name: Run test suite inside the image
+        run: docker run --rm playwright-qa-portfolio
