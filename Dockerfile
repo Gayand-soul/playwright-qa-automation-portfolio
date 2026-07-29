@@ -5,9 +5,7 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm ci
 
-COPY run-tests.sh ./
-RUN sed -i 's/\r$//' run-tests.sh && chmod +x run-tests.sh
-
 COPY . .
+RUN sed -i 's/\r$//' run-tests.sh && chmod +x run-tests.sh
 
 CMD ["./run-tests.sh"]
