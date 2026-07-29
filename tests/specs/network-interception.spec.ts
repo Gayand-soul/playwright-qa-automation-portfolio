@@ -14,6 +14,7 @@ test('diagnostic: inspect /saved responses across reload race', async ({ page })
 
   page.on('response', async (response) => {
     const url = response.url();
+    if (url.includes('/auth/v1/')) return; // never log auth token responses (contain access/refresh tokens)
     if (url.includes('_serverFn') || url.includes('supabase.co')) {
       log.push({
         phase: (page as any)._diagPhase ?? 'unlabeled',
@@ -83,6 +84,8 @@ test('observes network requests when the reader dashboard loads', async ({ page 
 
   page.on('response', async (response) => {
     const url = response.url();
+
+    if (url.includes('/auth/v1/')) return; // never log auth token responses (contain access/refresh tokens)
 
     if (url.includes('_serverFn') || url.includes('supabase.co')) {
       const body = await response.text().catch(() => '[could not read body]');
