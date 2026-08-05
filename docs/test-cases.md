@@ -1,6 +1,6 @@
 # Manual Test Cases — CookingPage Sandbox
 
-Scope matches `test-plan.md`: login, banner dismissal, and dashboard load verification for Reader and Creator roles; recipe viewing and saving; and Creator recipe publishing — across Chromium, Firefox, and WebKit (mobile viewports noted where behavior differs).
+Scope matches `test-plan.md`: login, banner dismissal, and dashboard load verification for Reader and Creator roles; recipe/creator search; and Creator recipe publishing — across Chromium, Firefox, and WebKit (mobile viewports noted where behavior differs).
 
 | ID | Title | Steps | Expected Result | Priority |
 |---|---|---|---|---|
@@ -22,9 +22,14 @@ Scope matches `test-plan.md`: login, banner dismissal, and dashboard load verifi
 | TC-16 (edge case) | Unsaving a recipe on Mobile Chrome | 1. On Mobile Chrome, tap "Spara" on a recipe detail page. | Expected: exactly one save-toggle call fires. Actual (known bug, Issue #18): the tap fires the toggle handler multiple times, leaving the save state unreliable. Documents current behavior. | Low |
 | TC-17 | Creator records and publishes a recipe — happy path | 1. Complete Creator login.<br>2. Click "🎙️ Spela in recept".<br>3. Select a time category.<br>4. Record, stop, upload a photo, click "Publicera recept". | Recipe saves and publishes successfully; no error banner shown. **Not currently automatable end-to-end** — Playwright's fake microphone feeds silence, producing a generic empty recipe rather than exercising real transcription. Covered manually only until a non-mic path to a realistic payload exists. | Medium |
 | TC-18 (edge case) | Creator publish fails on non-integer `cooking_time_minutes` | 1. Trigger (or mock) a recipe save where `cooking_time_minutes` is a float, e.g. `30.075`.<br>2. Submit the publish request. | Backend (Postgres via Supabase REST) rejects the insert with `400` / code `22P02`; frontend shows "Kunde inte spara receptet". Known bug, Issue #20 — automated at both the API level (`recipes-api.spec.ts`) and UI level (`creator-recipe-publish.spec.ts`, via mocked response). | High |
+| TC-19 | Reader searches for a recipe by partial title | 1. Complete Reader login.<br>2. Enter a partial title (e.g. "Grillad fl") into the search box. | Matching recipe(s) appear in results. | High |
+| TC-20 | Search queries both recipes and creator profiles | 1. Enter a search term.<br>2. Inspect network requests. | Two parallel requests fire: `recipes?...` (title/description) and `profiles?...` (display_name), confirming the search is site-wide, not recipes-only. | Medium |
+| TC-21 (edge case) | Search term containing an apostrophe fails to match | 1. Enter a search term containing an apostrophe (e.g. `10 min'`). | Expected: `ilike` filter escapes the apostrophe once, matching the `profiles` request's behavior. Actual (known bug, Issue #21): the `recipes` filter double-escapes it (`\\'` instead of `\'`), so recipe titles/descriptions legitimately containing an apostrophe can never match. Confirmed via side-by-side comparison of the two parallel requests. | Medium |
+| TC-22 (edge case) | Clearing the search box does not restore the full recipe list | 1. Search for a term with results showing.<br>2. Clear the search box completely.<br>3. Press Enter. | Expected: full recipe list restored. Actual (known bug, Issue #22): recipe list area goes completely blank (no message, no recipes), and no network request fires at all. Only a full page reload restores the list. | High |
 
 ## Notes
 
 - TC-11, TC-12, TC-15, and TC-16 are edge cases intended to confirm real behavior rather than assert a specific "correct" outcome — record what actually happens and file a bug only if it contradicts expected UX (TC-15 and TC-16 already have bugs filed: Issues #16 and #18).
 - TC-17 is the one case in this table without full UI automation, by design — see the fake-microphone limitation noted in `test-plan.md` (§4, §6) and `README.md`.
 - Recipe search and filtering, and editing/deleting an existing blog post, remain out of scope — see `test-plan.md`.
+- Recipe search and filtering is now in scope (see TC-19–TC-22); editing or deleting an existing blog post remains out of scope — see `test-plan.md`.

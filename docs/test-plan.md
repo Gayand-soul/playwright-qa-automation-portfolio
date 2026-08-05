@@ -27,13 +27,12 @@ This document describes the test plan for a Swedish-language cooking/recipe web 
 - Data-driven and fixture-based tests: parameterized save-toggle flow across multiple recipes, image fixture (`stekt-bacon1.jpg`) used in the publish flow
 - Viewing an individual recipe (`/recipe/:id`) and toggling its saved state
 - Creator recipe publishing: voice-record → photo upload → publish flow, including regression coverage for a known publish-blocking bug (Issue #20)
+- Site-wide recipe/creator search (search box querying `recipes` and `profiles` in parallel), including regression coverage for two bugs found via Codegen-assisted exploration: apostrophe double-escaping in the recipes filter, and the search-clear reset failure
 
 ### Out of scope (current phase — candidates for later phases)
 
-- Recipe search and filtering
 - Editing or deleting an existing blog post (publishing itself is now in scope; edit/delete are not)
-- CI/CD pipeline behavior (covered under Phase 4, not by this plan)
-- Payment, account creation, or any real credential/production flow (this is a sandbox with fixed test accounts only)
+
 
 ## 4. Test Approach
 
