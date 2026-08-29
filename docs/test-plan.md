@@ -31,7 +31,7 @@ This document describes the test plan for a Swedish-language cooking/recipe web 
 
 ### Out of scope (current phase — candidates for later phases)
 
-- Editing or deleting an existing blog post (publishing itself is now in scope; edit/delete are not)
+- Editing an existing recipe — investigated via Codegen-assisted exploration; no edit UI exists anywhere in the app (not on the dashboard cards, not on the public recipe view), so there's nothing to test. Tracked as a product gap rather than a coverage gap (Issue #23).
 
 
 ## 4. Test Approach

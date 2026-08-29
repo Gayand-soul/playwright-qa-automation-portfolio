@@ -1,0 +1,242 @@
+{
+  "byIter": {
+    "0": {
+      "domEvents": [],
+      "networkCalls": [
+        {
+          "iter": 0,
+          "tMs": 1156,
+          "method": "GET",
+          "url": "https://talk-and-cook-recipes.lovable.app/_serverFn/9619fc1e6ec914bf5e95550abd26fc3edcfe204633a58831f2ac194dd2a57fba"
+        },
+        {
+          "iter": 0,
+          "tMs": 1162,
+          "method": "GET",
+          "url": "https://talk-and-cook-recipes.lovable.app/_serverFn/9619fc1e6ec914bf5e95550abd26fc3edcfe204633a58831f2ac194dd2a57fba"
+        },
+        {
+          "iter": 0,
+          "tMs": 1167,
+          "method": "GET",
+          "url": "https://talk-and-cook-recipes.lovable.app/_serverFn/a10cb981358284df097f3f2ae98652f64510978dc6622f8d48a972efdcbddfe9"
+        },
+        {
+          "iter": 0,
+          "tMs": 1179,
+          "method": "GET",
+          "url": "https://talk-and-cook-recipes.lovable.app/_serverFn/d7d67165e4f01ed1e4437df9728b86cf4308cbc69ff1cac1eb173765bebd27fe?payload=%7B%22t%22%3A%7B%22t%22%3A10%2C%22i%22%3A0%2C%22p%22%3A%7B%22k%22%3A%5B%22data%22%5D%2C%22v%22%3A%5B%7B%22t%22%3A10%2C%22i%22%3A1%2C%22p%22%3A%7B%22k%22%3A%5B%22recipeId%22%5D%2C%22v%22%3A%5B%7B%22t%22%3A1%2C%22s%22%3A%22fb24607f-817c-4114-b633-0ef725c0d61d%22%7D%5D%7D%2C%22o%22%3A0%7D%5D%7D%2C%22o%22%3A0%7D%2C%22f%22%3A63%2C%22m%22%3A%5B%5D%7D"
+        },
+        {
+          "iter": 0,
+          "tMs": 1181,
+          "method": "GET",
+          "url": "https://fejqqtatmdvqefwizhlx.supabase.co/rest/v1/recipe_uses?select=recipe_id&user_id=eq.49f131d1-60b5-4c0e-bab0-df2a41f51a8c&recipe_id=eq.fb24607f-817c-4114-b633-0ef725c0d61d"
+        },
+        {
+          "iter": 0,
+          "tMs": 1182,
+          "method": "GET",
+          "url": "https://talk-and-cook-recipes.lovable.app/_serverFn/a10cb981358284df097f3f2ae98652f64510978dc6622f8d48a972efdcbddfe9"
+        },
+        {
+          "iter": 0,
+          "tMs": 1184,
+          "method": "GET",
+          "url": "https://talk-and-cook-recipes.lovable.app/_serverFn/a10cb981358284df097f3f2ae98652f64510978dc6622f8d48a972efdcbddfe9"
+        },
+        {
+          "iter": 0,
+          "tMs": 1186,
+          "method": "GET",
+          "url": "https://talk-and-cook-recipes.lovable.app/_serverFn/d7d67165e4f01ed1e4437df9728b86cf4308cbc69ff1cac1eb173765bebd27fe?payload=%7B%22t%22%3A%7B%22t%22%3A10%2C%22i%22%3A0%2C%22p%22%3A%7B%22k%22%3A%5B%22data%22%5D%2C%22v%22%3A%5B%7B%22t%22%3A10%2C%22i%22%3A1%2C%22p%22%3A%7B%22k%22%3A%5B%22recipeId%22%5D%2C%22v%22%3A%5B%7B%22t%22%3A1%2C%22s%22%3A%22fb24607f-817c-4114-b633-0ef725c0d61d%22%7D%5D%7D%2C%22o%22%3A0%7D%5D%7D%2C%22o%22%3A0%7D%2C%22f%22%3A63%2C%22m%22%3A%5B%5D%7D"
+        },
+        {
+          "iter": 0,
+          "tMs": 1186,
+          "method": "GET",
+          "url": "https://fejqqtatmdvqefwizhlx.supabase.co/rest/v1/recipe_uses?select=recipe_id&user_id=eq.49f131d1-60b5-4c0e-bab0-df2a41f51a8c&recipe_id=eq.fb24607f-817c-4114-b633-0ef725c0d61d"
+        },
+        {
+          "iter": 0,
+          "tMs": 1187,
+          "method": "GET",
+          "url": "https://talk-and-cook-recipes.lovable.app/_serverFn/d7d67165e4f01ed1e4437df9728b86cf4308cbc69ff1cac1eb173765bebd27fe?payload=%7B%22t%22%3A%7B%22t%22%3A10%2C%22i%22%3A0%2C%22p%22%3A%7B%22k%22%3A%5B%22data%22%5D%2C%22v%22%3A%5B%7B%22t%22%3A10%2C%22i%22%3A1%2C%22p%22%3A%7B%22k%22%3A%5B%22recipeId%22%5D%2C%22v%22%3A%5B%7B%22t%22%3A1%2C%22s%22%3A%22fb24607f-817c-4114-b633-0ef725c0d61d%22%7D%5D%7D%2C%22o%22%3A0%7D%5D%7D%2C%22o%22%3A0%7D%2C%22f%22%3A63%2C%22m%22%3A%5B%5D%7D"
+        },
+        {
+          "iter": 0,
+          "tMs": 1212,
+          "method": "GET",
+          "url": "https://fejqqtatmdvqefwizhlx.supabase.co/rest/v1/recipe_uses?select=recipe_id&user_id=eq.49f131d1-60b5-4c0e-bab0-df2a41f51a8c&recipe_id=eq.fb24607f-817c-4114-b633-0ef725c0d61d"
+        },
+        {
+          "iter": 0,
+          "tMs": 1598,
+          "method": "POST",
+          "url": "https://talk-and-cook-recipes.lovable.app/_serverFn/600b3f8853a200de129cff00c4571c9941c230c4baa293896dcdfc99ff82f30f"
+        }
+      ]
+    },
+    "1": {
+      "domEvents": [],
+      "networkCalls": [
+        {
+          "iter": 1,
+          "tMs": 3206,
+          "method": "POST",
+          "url": "https://talk-and-cook-recipes.lovable.app/_serverFn/600b3f8853a200de129cff00c4571c9941c230c4baa293896dcdfc99ff82f30f"
+        }
+      ]
+    },
+    "2": {
+      "domEvents": [],
+      "networkCalls": [
+        {
+          "iter": 2,
+          "tMs": 4788,
+          "method": "POST",
+          "url": "https://talk-and-cook-recipes.lovable.app/_serverFn/600b3f8853a200de129cff00c4571c9941c230c4baa293896dcdfc99ff82f30f"
+        }
+      ]
+    },
+    "3": {
+      "domEvents": [],
+      "networkCalls": [
+        {
+          "iter": 3,
+          "tMs": 6376,
+          "method": "POST",
+          "url": "https://talk-and-cook-recipes.lovable.app/_serverFn/600b3f8853a200de129cff00c4571c9941c230c4baa293896dcdfc99ff82f30f"
+        }
+      ]
+    },
+    "4": {
+      "domEvents": [],
+      "networkCalls": [
+        {
+          "iter": 4,
+          "tMs": 7975,
+          "method": "POST",
+          "url": "https://talk-and-cook-recipes.lovable.app/_serverFn/600b3f8853a200de129cff00c4571c9941c230c4baa293896dcdfc99ff82f30f"
+        }
+      ]
+    },
+    "5": {
+      "domEvents": [],
+      "networkCalls": [
+        {
+          "iter": 5,
+          "tMs": 9555,
+          "method": "POST",
+          "url": "https://talk-and-cook-recipes.lovable.app/_serverFn/600b3f8853a200de129cff00c4571c9941c230c4baa293896dcdfc99ff82f30f"
+        }
+      ]
+    },
+    "6": {
+      "domEvents": [],
+      "networkCalls": [
+        {
+          "iter": 6,
+          "tMs": 11189,
+          "method": "POST",
+          "url": "https://talk-and-cook-recipes.lovable.app/_serverFn/600b3f8853a200de129cff00c4571c9941c230c4baa293896dcdfc99ff82f30f"
+        }
+      ]
+    },
+    "7": {
+      "domEvents": [],
+      "networkCalls": [
+        {
+          "iter": 7,
+          "tMs": 12813,
+          "method": "POST",
+          "url": "https://talk-and-cook-recipes.lovable.app/_serverFn/600b3f8853a200de129cff00c4571c9941c230c4baa293896dcdfc99ff82f30f"
+        }
+      ]
+    },
+    "8": {
+      "domEvents": [],
+      "networkCalls": [
+        {
+          "iter": 8,
+          "tMs": 14472,
+          "method": "POST",
+          "url": "https://talk-and-cook-recipes.lovable.app/_serverFn/600b3f8853a200de129cff00c4571c9941c230c4baa293896dcdfc99ff82f30f"
+        }
+      ]
+    },
+    "9": {
+      "domEvents": [],
+      "networkCalls": [
+        {
+          "iter": 9,
+          "tMs": 16056,
+          "method": "POST",
+          "url": "https://talk-and-cook-recipes.lovable.app/_serverFn/600b3f8853a200de129cff00c4571c9941c230c4baa293896dcdfc99ff82f30f"
+        }
+      ]
+    }
+  },
+  "summary": [
+    {
+      "iter": 0,
+      "trustedClicks": 0,
+      "totalNetworkCalls": 12,
+      "postCalls": 1
+    },
+    {
+      "iter": 1,
+      "trustedClicks": 0,
+      "totalNetworkCalls": 1,
+      "postCalls": 1
+    },
+    {
+      "iter": 2,
+      "trustedClicks": 0,
+      "totalNetworkCalls": 1,
+      "postCalls": 1
+    },
+    {
+      "iter": 3,
+      "trustedClicks": 0,
+      "totalNetworkCalls": 1,
+      "postCalls": 1
+    },
+    {
+      "iter": 4,
+      "trustedClicks": 0,
+      "totalNetworkCalls": 1,
+      "postCalls": 1
+    },
+    {
+      "iter": 5,
+      "trustedClicks": 0,
+      "totalNetworkCalls": 1,
+      "postCalls": 1
+    },
+    {
+      "iter": 6,
+      "trustedClicks": 0,
+      "totalNetworkCalls": 1,
+      "postCalls": 1
+    },
+    {
+      "iter": 7,
+      "trustedClicks": 0,
+      "totalNetworkCalls": 1,
+      "postCalls": 1
+    },
+    {
+      "iter": 8,
+      "trustedClicks": 0,
+      "totalNetworkCalls": 1,
+      "postCalls": 1
+    },
+    {
+      "iter": 9,
+      "trustedClicks": 0,
+      "totalNetworkCalls": 1,
+      "postCalls": 1
+    }
+  ]
+}

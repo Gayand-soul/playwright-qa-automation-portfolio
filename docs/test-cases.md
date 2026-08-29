@@ -1,6 +1,6 @@
 # Manual Test Cases — CookingPage Sandbox
 
-Scope matches `test-plan.md`: login, banner dismissal, and dashboard load verification for Reader and Creator roles; recipe/creator search; and Creator recipe publishing — across Chromium, Firefox, and WebKit (mobile viewports noted where behavior differs).
+Scope matches `test-plan.md`: login, banner dismissal, and dashboard load verification for Reader and Creator roles; recipe/creator search; and Creator recipe publishing — across Chromium, Firefox, and WebKit (mobile viewports noted where behavior differs);and Creator recipe deletion" before the em dash.
 
 | ID | Title | Steps | Expected Result | Priority |
 |---|---|---|---|---|
@@ -26,6 +26,11 @@ Scope matches `test-plan.md`: login, banner dismissal, and dashboard load verifi
 | TC-20 | Search queries both recipes and creator profiles | 1. Enter a search term.<br>2. Inspect network requests. | Two parallel requests fire: `recipes?...` (title/description) and `profiles?...` (display_name), confirming the search is site-wide, not recipes-only. | Medium |
 | TC-21 (edge case) | Search term containing an apostrophe fails to match | 1. Enter a search term containing an apostrophe (e.g. `10 min'`). | Expected: `ilike` filter escapes the apostrophe once, matching the `profiles` request's behavior. Actual (known bug, Issue #21): the `recipes` filter double-escapes it (`\\'` instead of `\'`), so recipe titles/descriptions legitimately containing an apostrophe can never match. Confirmed via side-by-side comparison of the two parallel requests. | Medium |
 | TC-22 (edge case) | Clearing the search box does not restore the full recipe list | 1. Search for a term with results showing.<br>2. Clear the search box completely.<br>3. Press Enter. | Expected: full recipe list restored. Actual (known bug, Issue #22): recipe list area goes completely blank (no message, no recipes), and no network request fires at all. Only a full page reload restores the list. | High |
+| TC-23 | Creator recipe delete shows a native confirmation dialog | 1. Complete Creator login.<br>2. On "Min blogg", click "Radera recept" on a recipe card. | A native browser `confirm()` dialog appears (not a custom UI modal), with the message "Radera '<title>'? Det går inte att ångra." | Medium |
+| TC-24 | Cancelling the delete confirmation keeps the recipe | 1. Click "Radera recept" on a recipe card.<br>2. Dismiss/cancel the confirm dialog. | Recipe remains in "Mina recept"; count unchanged. | High |
+| TC-25 | Confirming the delete confirmation removes the recipe | 1. Click "Radera recept" on a recipe card.<br>2. Accept the confirm dialog. | Recipe permanently removed from "Mina recept"; count decreases by one. Per the dialog's own copy, this cannot be undone. | High |
+| TC-26 (edge case) | No way to edit an existing recipe | 1. Complete Creator login.<br>2. On "Min blogg", inspect each recipe card for an edit control.<br>3. Open a recipe's public view (`/recipe/:id`) and check there too. | Expected: some way to modify an existing recipe's title/description/ingredients. Actual (product gap, Issue #23): no edit affordance exists anywhere — only star/favorite, publish/unpublish, and delete. Documents current behavior. | Medium |
+
 
 ## Notes
 
@@ -33,3 +38,4 @@ Scope matches `test-plan.md`: login, banner dismissal, and dashboard load verifi
 - TC-17 is the one case in this table without full UI automation, by design — see the fake-microphone limitation noted in `test-plan.md` (§4, §6) and `README.md`.
 - Recipe search and filtering, and editing/deleting an existing blog post, remain out of scope — see `test-plan.md`.
 - Recipe search and filtering is now in scope (see TC-19–TC-22); editing or deleting an existing blog post remains out of scope — see `test-plan.md`.
+- TC-23–TC-25 are scoped in automation to disposable "Enkelt recept" test fixtures only (`recipe-delete.spec.ts`), so the delete regression suite can never remove a real seed recipe.

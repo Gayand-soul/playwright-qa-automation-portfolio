@@ -131,11 +131,20 @@ for (const recipe of testRecipes) {
     // reload-retry below, and it fails earlier than that fix even applies -
     // right at the local "Sparat" button check on the detail page - so this
     // is confirmed independent of the /saved list bug, not fixed by it.
-    test.skip(testInfo.project.name === 'Mobile Chrome',
+
+    // Issue #18 (Mobile Chrome save-toggle double-fire) previously required
+    // skipping this project: a single tap fired 3 calls to the save-toggle
+    // serverFn instead of 1. Re-verified 2026-07-30 with the skip removed —
+    // clean single-fire behavior across repeated toggles and both testable
+    // recipes (the third, "Ugnsbakad lax med citronpotatis", currently 404s
+    // due to the sandbox's periodic data reset — separate issue, not #18).
+    // If this regresses, re-add the skip and see tests/specs/issue-18-diagnostic.spec.ts
+    // for the instrumentation used to confirm it.
+   /* test.skip(testInfo.project.name === 'Mobile Chrome',
       'Tapping Spara fires the save-toggle serverFn multiple times on Mobile Chrome, and the net ' +
       'toggle state is unreliable as a result (confirmed separately from the /saved list bug below). ' +
       'See https://github.com/Gayand-soul/playwright-qa-automation-portfolio/issues/18'
-    );
+    );*/
 
     // Previously also skipped here for this recipe on Chromium specifically
     // (list never picked up the new save). Manual investigation (Issue #16)
