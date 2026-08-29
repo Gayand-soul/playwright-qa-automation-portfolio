@@ -52,10 +52,9 @@ tests/
     recipes-api.spec.ts             # API-level: POSTs directly to Supabase REST to confirm
                                   # Postgres rejects a non-integer cooking_time_minutes (Issue #20)
                                   # (chromium-only — pure request-fixture test, no browser needed)
-
-    recipe-delete.spec.ts         # Creator "Min blogg" dashboard: delete recipe flow (native # confirm()
-                                    dialog, accept/cancel), scoped to disposable # "Enkelt recept" test 
-                                    fixtures only
+    recipe-delete.spec.ts           # Creator "Min blogg" dashboard: delete recipe flow (native
+                                  # confirm() dialog, accept/cancel), scoped to disposable
+                                  # "Enkelt recept" test fixtures only
 
 tsconfig.json
 playwright.config.ts
@@ -68,7 +67,7 @@ playwright.config.ts
 - [x] **Phase 2 — Page Object Model:** Refactor tests into POM classes (`BasePage`, `LoginPage`, `ReaderDashboard`, `CreatorDashboard`)
 - [x] **Phase 3 — Intermediate & API testing:** Test plan and manual test cases documented (`docs/`); API request testing, auth state reuse (storage state + Supabase REST), network interception, and data-driven tests (parameterized save-toggle flow) all complete
 - [x] **Phase 3.5 — Bug hunting via Codegen:** Recorded the creator voice-recipe flow (voice → photo → publish) with Playwright Codegen; found a real publish-blocking bug (Issue #20, below) and added both a UI-level and an API-level regression test for it
-- [ ] **Phase 4 — CI/CD (in progress):** GitHub Actions pipeline runs on every push/PR to `main`; the known `/saved` race (below) is quarantined in a separate non-blocking step so it can't mask a real regression in the stable suite. Docker and published HTML reports still to come.
+- [x] **Phase 4 — CI/CD:** GitHub Actions pipeline runs on every push/PR to `main`; the known `/saved` race (below) is quarantined in a separate non-blocking step so it can't mask a real regression in the stable suite. Docker image builds and runs the suite in a dedicated CI job (triggered when `Dockerfile`/`run-tests.sh`/`package*.json` change, or manually via `workflow_dispatch`); stable and flaky-suite HTML reports are published to GitHub Pages after every run.
 
 Active investigations: [Issue #16](https://github.com/Gayand-soul/playwright-qa-automation-portfolio/issues/16) — a `/saved` list staleness race. Root cause still unconfirmed: a diagnostic test in `network-interception.spec.ts` identified the actual serverFn endpoint behind the list and captured clean, consistent data under single-session load — meaning the race needs the full multi-project CI concurrency to reproduce, and doesn't show up in isolated manual runs. No caching headers (`Cache-Control`, `Age`) appear on the app's own endpoints, so a CDN/edge cache and backend read/write lag are both still on the table — [Issue #18](https://github.com/Gayand-soul/playwright-qa-automation-portfolio/issues/18) — a separate touch double-fire bug on Mobile Chrome — and [Issue #20](https://github.com/Gayand-soul/playwright-qa-automation-portfolio/issues/20) — recipe publish fails because `cooking_time_minutes` is computed as a float and sent to an `integer` Postgres column.
 — and two bugs found via Codegen-assisted exploration of the search feature: [Issue #21](https://github.com/Gayand-soul/playwright-qa-automation-portfolio/issues/21) — the recipe search double-escapes apostrophes in its `ilike` filter (`\\'` instead of `\'`), so titles/descriptions legitimately containing one can never match; and [Issue #22](https://github.com/Gayand-soul/playwright-qa-automation-portfolio/issues/22) — clearing the search box fires no network request and leaves the recipe list blank instead of restoring the full list, recoverable only via a page reload.
